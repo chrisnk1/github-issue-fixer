@@ -147,6 +147,10 @@ Respond with JSON array of search query strings.`;
     private extractTechnologies(systemOverview: SystemOverview): string[] {
         const technologies = new Set<string>();
 
+        if (!systemOverview || !systemOverview.keyFiles) {
+            return [];
+        }
+
         // Extract from file paths
         systemOverview.keyFiles.forEach(file => {
             if (file.path.includes('.tsx') || file.path.includes('.jsx')) {
@@ -171,13 +175,15 @@ Respond with JSON array of search query strings.`;
 
         // Extract from dependencies
         systemOverview.keyFiles.forEach(file => {
-            file.dependencies.forEach(dep => {
-                if (dep.includes('next')) technologies.add('Next.js');
-                if (dep.includes('express')) technologies.add('Express');
-                if (dep.includes('fastify')) technologies.add('Fastify');
-                if (dep.includes('django')) technologies.add('Django');
-                if (dep.includes('flask')) technologies.add('Flask');
-            });
+            if (file.dependencies) {
+                file.dependencies.forEach(dep => {
+                    if (dep.includes('next')) technologies.add('Next.js');
+                    if (dep.includes('express')) technologies.add('Express');
+                    if (dep.includes('fastify')) technologies.add('Fastify');
+                    if (dep.includes('django')) technologies.add('Django');
+                    if (dep.includes('flask')) technologies.add('Flask');
+                });
+            }
         });
 
         return Array.from(technologies);

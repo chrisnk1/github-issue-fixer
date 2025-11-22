@@ -43,14 +43,19 @@ async function runWorkflow() {
         // 5. Simulate a System Overview (mocking analysis phase)
         const mockSystemOverview: SystemOverview = {
             summary: "A simple Express.js API with a login endpoint.",
+            architecture: {
+                type: 'mermaid',
+                content: 'graph TD; A[Client] --> B[Server];'
+            },
             keyFiles: [
-                { path: "src/index.js", purpose: "Main server file", exports: ["app"] },
-                { path: "src/auth.js", purpose: "Authentication logic", exports: ["login"] }
+                { path: "src/index.js", purpose: "Main server file", exports: ["app"], dependencies: ["express"] },
+                { path: "src/auth.js", purpose: "Authentication logic", exports: ["login"], dependencies: [] }
             ],
-            dependencies: { "express": "^4.18.2" },
+            callGraph: [],
             testResults: {
-                passed: 5,
-                failed: 1,
+                success: false,
+                output: "Tests failed",
+                duration: 1000,
                 failedTests: ["POST /login should return 400 for invalid email"]
             }
         };
@@ -95,7 +100,7 @@ async function runWorkflow() {
 
         console.log('\n🔹 Suggestions:');
         plan.suggestions.forEach((s, i) => {
-            console.log(`${i + 1}. ${s.description}`);
+            console.log(`${i + 1}. ${s.text || (s as any).description || JSON.stringify(s)}`);
         });
 
         // Cleanup
