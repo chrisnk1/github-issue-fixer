@@ -186,7 +186,7 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
 
                 {/* Plan */}
                 {session.plan && (
-                    <section className="session-section">
+                    <section id="fix-plan-section" className="session-section">
                         <div className="section-header">
                             <div className="section-icon">⊕</div>
                             <h2 className="section-title">Fix Plan</h2>
@@ -221,8 +221,30 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
                         </div>
                         <p className="completion-message">Fix plan has been generated successfully.</p>
                         <div className="completion-actions">
-                            <button className="btn btn-primary">View Plan</button>
-                            <button className="btn btn-secondary">Export</button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => {
+                                    document.getElementById('fix-plan-section')?.scrollIntoView({ behavior: 'smooth' });
+                                }}
+                            >
+                                View Plan
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => {
+                                    const blob = new Blob([JSON.stringify(session.plan, null, 2)], { type: 'application/json' });
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `fix-plan-${sessionId}.json`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                }}
+                            >
+                                Export JSON
+                            </button>
                         </div>
                     </section>
                 )}
