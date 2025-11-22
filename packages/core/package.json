@@ -1,0 +1,27 @@
+{
+    "name": "@fix-together/core",
+    "version": "0.1.0",
+    "type": "module",
+    "description": "Core engine for GitHub issue fixing with E2B sandboxes",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "test": "vitest",
+        "test:integration": "vitest --config vitest.integration.config.ts",
+        "typecheck": "tsc --noEmit",
+        "clean": "rm -rf dist *.tsbuildinfo"
+    },
+    "dependencies": {
+        "@e2b/code-interpreter": "^0.0.5",
+        "@google/generative-ai": "^0.2.0",
+        "groq-sdk": "^0.3.0",
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "typescript": "^5.3.3",
+        "vitest": "^1.2.0"
+    }
+}

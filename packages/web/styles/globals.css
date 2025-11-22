@@ -1,0 +1,192 @@
+/* Swiss-Japanese Minimalist Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Colors - Monochromatic with subtle accents */
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-border: #e5e5e5;
+  --color-text: #171717;
+  --color-text-secondary: #737373;
+  --color-text-tertiary: #a3a3a3;
+  --color-accent: #000000;
+  --color-accent-subtle: #f5f5f5;
+  
+  /* Spacing - Generous, grid-based */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Borders */
+  --border-width: 1px;
+  --border-radius: 0;
+  
+  /* Shadows - Minimal */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--text-4xl); margin-bottom: var(--space-8); }
+h2 { font-size: var(--text-3xl); margin-bottom: var(--space-6); }
+h3 { font-size: var(--text-2xl); margin-bottom: var(--space-4); }
+h4 { font-size: var(--text-xl); margin-bottom: var(--space-4); }
+
+p {
+  margin-bottom: var(--space-4);
+  line-height: var(--line-height-relaxed);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--color-accent-subtle);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background-color: var(--color-accent-subtle);
+  padding: var(--space-4);
+  overflow-x: auto;
+  margin-bottom: var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+}
+
+/* Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* Components */
+.button {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  padding: var(--space-3) var(--space-6);
+  border: var(--border-width) solid var(--color-accent);
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.button:hover {
+  background-color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: var(--color-accent);
+}
+
+.button-secondary:hover {
+  background-color: var(--color-accent-subtle);
+}
+
+.input {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  padding: var(--space-6);
+}
+
+/* Utilities */
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-6 { margin-bottom: var(--space-6); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+.mt-0 { margin-top: 0; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.mt-6 { margin-top: var(--space-6); }
+.mt-8 { margin-top: var(--space-8); }
