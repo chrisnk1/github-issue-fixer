@@ -1,6 +1,7 @@
 export * from './types.js';
 export * from './sandbox-manager.js';
 export * from './ai-client.js';
+export * from './mcp-integration.js';
 export * from './repository-analyzer.js';
 export * from './fix-planner.js';
 export * from './question-generator.js';

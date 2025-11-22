@@ -1,5 +1,5 @@
 import type { AIClient } from './ai-client.js';
-import type { SystemOverview, FixPlan, FixStep, Question, Resource, Suggestion } from './types.js';
+import type { SystemOverview, FixPlan, FixStep } from './types.js';
 import { QuestionGenerator } from './question-generator.js';
 import { ResourceLinker } from './resource-linker.js';
 import { SuggestionEngine } from './suggestion-engine.js';
@@ -12,9 +12,9 @@ export class FixPlanner {
     private resourceLinker: ResourceLinker;
     private suggestionEngine: SuggestionEngine;
 
-    constructor(private ai: AIClient, config?: { exaApiKey?: string }) {
+    constructor(private ai: AIClient) {
         this.questionGen = new QuestionGenerator(ai);
-        this.resourceLinker = new ResourceLinker(ai, config);
+        this.resourceLinker = new ResourceLinker(ai);
         this.suggestionEngine = new SuggestionEngine(ai);
     }
 

@@ -1,6 +1,17 @@
+export interface MCPServerConfig {
+    exa?: {
+        apiKey: string;
+    };
+    github?: {
+        apiKey: string;
+    };
+    filesystem?: boolean;
+}
+
 export interface SandboxConfig {
     apiKey: string;
     timeout?: number;
+    mcp?: MCPServerConfig;
 }
 
 export interface RepositoryInfo {

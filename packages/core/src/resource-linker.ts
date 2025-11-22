@@ -8,8 +8,8 @@ import { DocumentationFinder } from './documentation-finder.js';
 export class ResourceLinker {
     private docFinder: DocumentationFinder;
 
-    constructor(private ai: AIClient, config?: { exaApiKey?: string }) {
-        this.docFinder = new DocumentationFinder(ai, config);
+    constructor(private ai: AIClient) {
+        this.docFinder = new DocumentationFinder(ai);
     }
 
     /**

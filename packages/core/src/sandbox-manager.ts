@@ -1,4 +1,4 @@
-import { CodeInterpreter } from '@e2b/code-interpreter';
+import { Sandbox } from 'e2b';
 import type {
     SandboxConfig,
     RepositoryInfo,
@@ -7,7 +7,7 @@ import type {
 } from './types.js';
 
 export class SandboxManager {
-    private sandbox: CodeInterpreter | null = null;
+    private sandbox: Sandbox | null = null;
     private config: SandboxConfig;
 
     constructor(config: SandboxConfig) {
@@ -15,12 +15,28 @@ export class SandboxManager {
     }
 
     /**
-     * Creates and initializes a new E2B sandbox
+     * Creates and initializes a new E2B sandbox with MCP support
      */
     async create(): Promise<void> {
-        this.sandbox = await CodeInterpreter.create({
+        // Build MCP configuration using the correct e2b types
+        const mcpConfig: any = {};
+
+        // Configure MCP servers if provided
+        if (this.config.mcp?.exa) {
+            mcpConfig.exa = { apiKey: this.config.mcp.exa.apiKey };
+        }
+        if (this.config.mcp?.github) {
+            mcpConfig.githubOfficial = { apiKey: this.config.mcp.github.apiKey };
+        }
+        if (this.config.mcp?.filesystem) {
+            mcpConfig.filesystem = {};
+        }
+
+        // Use betaCreate for MCP support
+        this.sandbox = await Sandbox.betaCreate({
             apiKey: this.config.apiKey,
-            timeout: this.config.timeout || 300000, // 5 minutes default
+            timeoutMs: this.config.timeout || 300000, // 5 minutes default
+            mcp: Object.keys(mcpConfig).length > 0 ? mcpConfig : undefined,
         });
     }
 
@@ -36,13 +52,13 @@ export class SandboxManager {
         const cloneCmd = `git clone --depth 1 --branch ${branch} ${repo.url} /home/user/repo`;
 
         const startTime = Date.now();
-        const result = await this.sandbox.notebook.execCell(cloneCmd);
+        const result = await this.sandbox.commands.run(cloneCmd);
         const duration = Date.now() - startTime;
 
         return {
-            exitCode: result.error ? 1 : 0,
-            stdout: result.text || '',
-            stderr: result.error?.value || '',
+            exitCode: result.exitCode,
+            stdout: result.stdout,
+            stderr: result.stderr,
             duration,
         };
     }
@@ -67,8 +83,8 @@ export class SandboxManager {
       else echo "unknown"; fi
     `;
 
-        const detectResult = await this.sandbox.notebook.execCell(detectCmd);
-        const packageManager = detectResult.text?.trim() || 'unknown';
+        const detectResult = await this.sandbox.commands.run(detectCmd);
+        const packageManager = detectResult.stdout.trim() || 'unknown';
 
         if (packageManager === 'unknown') {
             return {
@@ -91,13 +107,13 @@ export class SandboxManager {
 
         const installCmd = installCommands[packageManager];
         const startTime = Date.now();
-        const result = await this.sandbox.notebook.execCell(installCmd);
+        const result = await this.sandbox.commands.run(installCmd);
         const duration = Date.now() - startTime;
 
         return {
-            exitCode: result.error ? 1 : 0,
-            stdout: result.text || '',
-            stderr: result.error?.value || '',
+            exitCode: result.exitCode,
+            stdout: result.stdout,
+            stderr: result.stderr,
             duration,
         };
     }
@@ -122,8 +138,8 @@ export class SandboxManager {
       else echo "none"; fi
     `;
 
-        const detectResult = await this.sandbox.notebook.execCell(detectCmd);
-        const testCmd = detectResult.text?.trim();
+        const detectResult = await this.sandbox.commands.run(detectCmd);
+        const testCmd = detectResult.stdout.trim();
 
         if (!testCmd || testCmd === 'none') {
             return {
@@ -134,11 +150,11 @@ export class SandboxManager {
         }
 
         const startTime = Date.now();
-        const result = await this.sandbox.notebook.execCell(`cd /home/user/repo && ${testCmd}`);
+        const result = await this.sandbox.commands.run(`cd /home/user/repo && ${testCmd}`);
         const duration = Date.now() - startTime;
 
-        const output = result.text || '';
-        const success = !result.error;
+        const output = result.stdout || '';
+        const success = result.exitCode === 0;
 
         // Parse failed tests (basic implementation)
         const failedTests: string[] = [];
@@ -167,13 +183,13 @@ export class SandboxManager {
 
         const fullCmd = cwd ? `cd ${cwd} && ${command}` : command;
         const startTime = Date.now();
-        const result = await this.sandbox.notebook.execCell(fullCmd);
+        const result = await this.sandbox.commands.run(fullCmd);
         const duration = Date.now() - startTime;
 
         return {
-            exitCode: result.error ? 1 : 0,
-            stdout: result.text || '',
-            stderr: result.error?.value || '',
+            exitCode: result.exitCode,
+            stdout: result.stdout,
+            stderr: result.stderr,
             duration,
         };
     }
@@ -186,12 +202,12 @@ export class SandboxManager {
             throw new Error('Sandbox not initialized');
         }
 
-        const result = await this.sandbox.notebook.execCell(`cat ${path}`);
-        if (result.error) {
-            throw new Error(`Failed to read file: ${result.error.value}`);
+        const result = await this.sandbox.commands.run(`cat ${path}`);
+        if (result.exitCode !== 0) {
+            throw new Error(`Failed to read file: ${result.stderr}`);
         }
 
-        return result.text || '';
+        return result.stdout || '';
     }
 
     /**
@@ -204,12 +220,12 @@ export class SandboxManager {
 
         // Escape content for shell
         const escapedContent = content.replace(/'/g, "'\\''");
-        const result = await this.sandbox.notebook.execCell(
+        const result = await this.sandbox.commands.run(
             `echo '${escapedContent}' > ${path}`
         );
 
-        if (result.error) {
-            throw new Error(`Failed to write file: ${result.error.value}`);
+        if (result.exitCode !== 0) {
+            throw new Error(`Failed to write file: ${result.stderr}`);
         }
     }
 
@@ -221,12 +237,12 @@ export class SandboxManager {
             throw new Error('Sandbox not initialized');
         }
 
-        const result = await this.sandbox.notebook.execCell(`find ${directory} -type f`);
-        if (result.error) {
-            throw new Error(`Failed to list files: ${result.error.value}`);
+        const result = await this.sandbox.commands.run(`find ${directory} -type f`);
+        if (result.exitCode !== 0) {
+            throw new Error(`Failed to list files: ${result.stderr}`);
         }
 
-        return (result.text || '').split('\n').filter(Boolean);
+        return (result.stdout || '').split('\n').filter(Boolean);
     }
 
     /**
@@ -234,7 +250,7 @@ export class SandboxManager {
      */
     async cleanup(): Promise<void> {
         if (this.sandbox) {
-            await this.sandbox.close();
+            await this.sandbox.kill();
             this.sandbox = null;
         }
     }
@@ -242,7 +258,31 @@ export class SandboxManager {
     /**
      * Gets the sandbox instance (for advanced usage)
      */
-    getSandbox(): CodeInterpreter | null {
+    getSandbox(): Sandbox | null {
         return this.sandbox;
+    }
+
+    /**
+     * Gets the MCP gateway URL for AI client integration
+     */
+    getMcpUrl(): string {
+        if (!this.sandbox) {
+            throw new Error('Sandbox not initialized');
+        }
+        return this.sandbox.getMcpUrl();
+    }
+
+    /**
+     * Gets the MCP authentication token
+     */
+    async getMcpToken(): Promise<string> {
+        if (!this.sandbox) {
+            throw new Error('Sandbox not initialized');
+        }
+        const token = await this.sandbox.getMcpToken();
+        if (!token) {
+            throw new Error('MCP not enabled for this sandbox');
+        }
+        return token;
     }
 }

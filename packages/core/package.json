@@ -14,7 +14,8 @@
         "clean": "rm -rf dist *.tsbuildinfo"
     },
     "dependencies": {
-        "@e2b/code-interpreter": "^0.0.5",
+        "e2b": "^2.7.0",
+        "openai": "^4.77.0",
         "@google/generative-ai": "^0.2.0",
         "groq-sdk": "^0.3.0",
         "zod": "^3.22.4"

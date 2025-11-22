@@ -4,14 +4,12 @@ import type { Resource } from './types.js';
 export interface DocumentationFinderConfig {
     exaApiKey?: string;
 }
-
 /**
  * Finds official documentation for detected libraries and frameworks
  */
 export class DocumentationFinder {
     constructor(
-        private ai: AIClient,
-        private config: DocumentationFinderConfig = {}
+        private ai: AIClient
     ) { }
 
     /**

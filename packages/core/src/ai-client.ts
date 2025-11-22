@@ -7,6 +7,11 @@ export interface AIConfig {
     model?: string;
 }
 
+export interface MCPConfig {
+    mcpUrl: string;
+    mcpToken: string;
+}
+
 export interface AIMessage {
     role: 'user' | 'assistant' | 'system';
     content: string;
@@ -73,11 +78,11 @@ export class AIClient {
 
         const result = await model.generateContent({
             contents: parts,
-            systemInstruction: systemMessage?.content,
             generationConfig: {
                 temperature: options?.temperature ?? 0.7,
             },
-        });
+            systemInstruction: systemMessage?.content,
+        } as any);
 
         const response = result.response;
         const text = response.text();
@@ -85,9 +90,9 @@ export class AIClient {
         return {
             content: text,
             usage: {
-                promptTokens: response.usageMetadata?.promptTokenCount || 0,
-                completionTokens: response.usageMetadata?.candidatesTokenCount || 0,
-                totalTokens: response.usageMetadata?.totalTokenCount || 0,
+                promptTokens: (response as any).usageMetadata?.promptTokenCount || 0,
+                completionTokens: (response as any).usageMetadata?.candidatesTokenCount || 0,
+                totalTokens: (response as any).usageMetadata?.totalTokenCount || 0,
             },
         };
     }
@@ -155,5 +160,65 @@ export class AIClient {
         }
 
         return JSON.parse(jsonText.trim()) as T;
+    }
+
+    /**
+     * Generates a response with MCP tool access
+     * This uses the OpenAI-compatible API for Groq with MCP gateway
+     */
+    async generateWithMCP(
+        messages: AIMessage[],
+        mcpConfig: MCPConfig,
+        options?: { temperature?: number }
+    ): Promise<AIResponse> {
+        if (this.config.provider === 'groq') {
+            return this.generateGroqWithMCP(messages, mcpConfig, options);
+        } else {
+            // For Google, fall back to regular generation
+            // MCP tool calling with Google Gemini requires different integration
+            return this.generate(messages, options);
+        }
+    }
+
+    private async generateGroqWithMCP(
+        messages: AIMessage[],
+        mcpConfig: MCPConfig,
+        options?: { temperature?: number }
+    ): Promise<AIResponse> {
+        if (!this.groqClient) {
+            throw new Error('Groq client not initialized');
+        }
+
+        // Use OpenAI's responses API format for MCP integration
+        const OpenAI = (await import('openai')).default;
+        const client = new OpenAI({
+            apiKey: this.config.apiKey,
+            baseURL: 'https://api.groq.com/openai/v1',
+        });
+
+        const response = await (client as any).responses.create({
+            model: this.config.model || 'llama-3.3-70b-versatile',
+            input: messages.map(m => m.content).join('\n'),
+            tools: [
+                {
+                    type: 'mcp',
+                    server_label: 'e2b-mcp-gateway',
+                    server_url: mcpConfig.mcpUrl,
+                    headers: {
+                        'Authorization': `Bearer ${mcpConfig.mcpToken}`
+                    }
+                }
+            ],
+            temperature: options?.temperature ?? 0.7,
+        });
+
+        return {
+            content: response.output_text || '',
+            usage: {
+                promptTokens: 0,
+                completionTokens: 0,
+                totalTokens: 0,
+            },
+        };
     }
 }
