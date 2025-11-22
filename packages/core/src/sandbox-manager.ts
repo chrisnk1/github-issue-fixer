@@ -237,12 +237,16 @@ export class SandboxManager {
             throw new Error('Sandbox not initialized');
         }
 
-        const result = await this.sandbox.commands.run(`find ${directory} -type f`);
-        if (result.exitCode !== 0) {
-            throw new Error(`Failed to list files: ${result.stderr}`);
+        try {
+            const result = await this.sandbox.commands.run(`find ${directory} -type f 2>/dev/null`);
+            return result.stdout.split('\n').filter(Boolean);
+        } catch (error: any) {
+            // find may return non-zero if it hits permission denied, but still output files
+            if (error.result && error.result.stdout) {
+                return error.result.stdout.split('\n').filter(Boolean);
+            }
+            throw new Error(`Failed to list files: ${error.message}`);
         }
-
-        return (result.stdout || '').split('\n').filter(Boolean);
     }
 
     /**

@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
     devDependencies:
       '@types/node':
         specifier: ^20.11.0
@@ -67,8 +71,8 @@ importers:
   packages/core:
     dependencies:
       '@google/generative-ai':
-        specifier: ^0.2.0
-        version: 0.2.1
+        specifier: ^0.24.1
+        version: 0.24.1
       e2b:
         specifier: ^2.7.0
         version: 2.7.0
@@ -724,8 +728,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@google/generative-ai@0.2.1:
-    resolution: {integrity: sha512-gNmMFadfwi7qf/6M9gImgyGJXY1jKQ/de8vGOqgJ0PPYgQ7WwzZDavbKrIuXS2zdqZZaYtxW3EFN6aG9x5wtFw==}
+  /@google/generative-ai@0.24.1:
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
     engines: {node: '>=18.0.0'}
     dev: false
 
@@ -1755,6 +1759,11 @@ packages:
     dependencies:
       vscode-languageserver-textdocument: 1.0.12
       vscode-languageserver-types: 3.17.5
+    dev: false
+
+  /dotenv@17.2.3:
+    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
+    engines: {node: '>=12'}
     dev: false
 
   /dunder-proto@1.0.1:
