@@ -19,11 +19,14 @@ pnpm install
 cp .env.example .env
 # Edit .env with your API keys
 
-# Run CLI
+# Run the real issue fixer (recommended)
+npx tsx run-real-issue.ts
+
+# Or run CLI
 pnpm --filter @fix-together/cli dev fix <issue-url>
 
 # Run Web UI
-pnpm --filter @fix-together/web dev
+pnpm --filter @fix-together/frontend dev
 ```
 
 ## Requirements
@@ -39,7 +42,7 @@ pnpm --filter @fix-together/web dev
 - `packages/core` - Core engine with E2B integration
 - `packages/mcp-client` - MCP server integrations
 - `packages/cli` - Command-line interface
-- `packages/web` - Fastify backend + Next.js frontend
+- `packages/frontend` - Next.js 16 frontend with Swiss-Japanese minimalist design
 
 ## License
 

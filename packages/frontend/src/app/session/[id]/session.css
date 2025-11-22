@@ -1,0 +1,401 @@
+/* Session Page - Swiss-Japanese Minimalism */
+
+.session-container {
+    min-height: 100vh;
+    background-color: var(--color-bg);
+    padding-bottom: var(--space-16);
+}
+
+.session-loading {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+}
+
+.session-loading p {
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    font-weight: 300;
+}
+
+/* Header */
+.session-header {
+    border-bottom: var(--border-width) solid var(--color-border);
+    background-color: var(--color-surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.session-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-8);
+}
+
+.session-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.session-id-badge {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border: var(--border-width) solid var(--color-border);
+}
+
+.session-id-label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+}
+
+.session-id-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.issue-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: var(--border-width) solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-base);
+}
+
+.issue-link:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent);
+}
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 0;
+    border: var(--border-width-thick) solid currentColor;
+}
+
+.status-text {
+    font-weight: 500;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-separator {
+    color: var(--color-text-tertiary);
+}
+
+.current-step {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 300;
+}
+
+/* Progress Bar */
+.progress-bar-container {
+    height: 1px;
+    background: var(--color-border);
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--color-accent);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Main Content */
+.session-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.session-section {
+    border: var(--border-width) solid var(--color-border);
+    padding: var(--space-8);
+    background-color: var(--color-surface);
+    transition: border-color var(--transition-base);
+}
+
+.session-section:hover {
+    border-color: var(--color-accent);
+}
+
+.session-section.error {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-subtle);
+}
+
+.session-section.complete {
+    border-color: var(--color-accent);
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-4);
+    border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.section-icon {
+    font-size: var(--text-lg);
+    opacity: 0.6;
+}
+
+.section-title {
+    font-size: var(--text-3xl);
+    font-weight: 300;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+/* Analysis Steps */
+.analysis-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.analysis-step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    padding: var(--space-2) 0;
+    font-weight: 300;
+}
+
+.step-marker {
+    width: 4px;
+    height: 4px;
+    background-color: var(--color-accent);
+    border-radius: 0;
+}
+
+/* Overview */
+.overview-summary {
+    font-size: var(--text-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-8);
+    font-weight: 300;
+}
+
+.subsection-title {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-4);
+}
+
+.key-files {
+    margin-top: var(--space-8);
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border: var(--border-width) solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-base);
+}
+
+.file-item:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent);
+}
+
+.file-item code {
+    background: none;
+    padding: 0;
+}
+
+/* Plan Steps */
+.plan-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.plan-step {
+    border: var(--border-width) solid var(--color-border);
+    padding: var(--space-6);
+    background-color: var(--color-surface);
+    position: relative;
+    transition: all var(--transition-base);
+}
+
+.plan-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background-color: var(--color-accent);
+    transition: height var(--transition-base);
+}
+
+.plan-step.running::before,
+.plan-step.complete::before {
+    height: 100%;
+}
+
+.plan-step:hover {
+    border-color: var(--color-accent);
+}
+
+.plan-step-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.plan-step-number {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    min-width: 32px;
+}
+
+.plan-step-title {
+    font-size: var(--text-xl);
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+    letter-spacing: -0.01em;
+}
+
+.plan-step-reasoning {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-4);
+    font-weight: 300;
+}
+
+.plan-step-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.file-badge {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-accent-subtle);
+    border: var(--border-width) solid var(--color-border);
+    color: var(--color-text-secondary);
+}
+
+/* Completion */
+.completion-message {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-8);
+    text-align: center;
+    font-weight: 300;
+}
+
+.completion-actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.error-message {
+    font-size: var(--text-base);
+    color: var(--color-text);
+    text-align: center;
+    font-weight: 300;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .session-header-content {
+        padding: var(--space-6);
+    }
+
+    .session-main {
+        padding: var(--space-6);
+    }
+
+    .session-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .plan-step-header {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .plan-step-number {
+        min-width: auto;
+    }
+
+    .completion-actions {
+        flex-direction: column;
+    }
+
+    .completion-actions .btn {
+        width: 100%;
+    }
+}
