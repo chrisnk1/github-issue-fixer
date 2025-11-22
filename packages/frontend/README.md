@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend
 
-## Getting Started
+Next.js 16 frontend with Swiss-Japanese minimalist design for the Fix Together application.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Configure environment variables**:
+   Create a `.env.local` file in this directory with:
+   ```bash
+   E2B_API_KEY=your_e2b_api_key_here
+   GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+   EXA_API_KEY=your_exa_api_key_here
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Run development server**:
+   ```bash
+   pnpm dev
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   The app will be available at `http://localhost:3000`
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- **Swiss-Japanese Minimalist Design**: Clean, functional interface with thin borders and generous whitespace
+- **Real-time Session Tracking**: Watch as the AI analyzes repos and generates fix plans
+- **E2B Sandbox Integration**: Safe code execution in isolated environments
+- **MCP Support**: Access to documentation search and GitHub integration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Enter a GitHub issue URL (e.g., `https://github.com/owner/repo/issues/123`)
+2. The backend creates an E2B sandbox with MCP support
+3. AI analyzes the repository structure
+4. Fix plan is generated with steps, resources, and suggestions
+5. View real-time progress in the session page
 
-## Deploy on Vercel
+## API Routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /api/session` - Create a new fix session
+- `GET /api/session/[id]` - Get session status and data

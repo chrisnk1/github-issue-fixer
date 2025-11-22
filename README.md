@@ -23,10 +23,32 @@ cp .env.example .env
 npx tsx run-real-issue.ts
 
 # Or run CLI
-pnpm --filter @fix-together/cli dev fix <issue-url>
+```
 
-# Run Web UI
-pnpm --filter @fix-together/frontend dev
+### Web UI
+
+```bash
+# Navigate to frontend package
+cd packages/frontend
+
+# Create .env.local with your API keys
+cat > .env.local << EOF
+E2B_API_KEY=your_e2b_api_key_here
+GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+EXA_API_KEY=your_exa_api_key_here
+EOF
+
+# Run development server
+pnpm dev
+
+# Open http://localhost:3000 in your browser
+```
+
+The web UI provides a Swiss-Japanese minimalist interface for:
+- Submitting GitHub issue URLs
+- Real-time progress tracking
+- Viewing generated fix plans with AI suggestions
+- Accessing recommended resources and documentation
 ```
 
 ## Requirements

@@ -1,22 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sessions } from '../route';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = params;
+    const { id } = await params;
 
-    // TODO: Fetch actual session data from storage/database
-    // For now, return mock data
-    return NextResponse.json({
-        id,
-        issueUrl: 'https://github.com/example/repo/issues/123',
-        status: 'analyzing',
-        progress: 0.3,
-        currentStep: 'Cloning repository',
-        overview: {
-            summary: 'Analyzing repository structure and dependencies...',
-            keyFiles: []
-        }
-    });
+    const session = sessions.get(id);
+
+    if (!session) {
+        return NextResponse.json(
+            { error: 'Session not found' },
+            { status: 404 }
+        );
+    }
+
+    // Return session data without the sandbox instance
+    const { sandbox, ...sessionData } = session;
+
+    return NextResponse.json(sessionData);
 }
