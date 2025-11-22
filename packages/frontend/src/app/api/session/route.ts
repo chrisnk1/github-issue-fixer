@@ -7,19 +7,7 @@ import {
     FixPlanner
 } from '@fix-together/core';
 import type { SystemOverview } from '@fix-together/core';
-
-// Store active sessions in memory (in production, use a database)
-const sessions = new Map<string, {
-    id: string;
-    issueUrl: string;
-    status: 'analyzing' | 'planning' | 'executing' | 'complete' | 'error';
-    progress: number;
-    currentStep?: string;
-    sandbox?: SandboxManager;
-    overview?: SystemOverview;
-    plan?: any;
-    error?: string;
-}>();
+import { sessions } from './sessionStore';
 
 export async function POST(request: NextRequest) {
     try {
@@ -224,6 +212,3 @@ async function runWorkflow(
         }
     }
 }
-
-// Export sessions for the GET endpoint
-export { sessions };

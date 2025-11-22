@@ -36,14 +36,40 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
     const [session, setSession] = useState<SessionData | null>(null);
 
     useEffect(() => {
+        let intervalId: NodeJS.Timeout;
+
         params.then(({ id }) => {
             setSessionId(id);
-            // Fetch session data
-            fetch(`/api/session/${id}`)
-                .then(res => res.json())
-                .then(setSession)
-                .catch(console.error);
+
+            // Fetch session data immediately
+            const fetchSession = () => {
+                fetch(`/api/session/${id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        setSession(data);
+
+                        // Stop polling if session is complete or errored
+                        if (data.status === 'complete' || data.status === 'error') {
+                            if (intervalId) {
+                                clearInterval(intervalId);
+                            }
+                        }
+                    })
+                    .catch(console.error);
+            };
+
+            fetchSession();
+
+            // Poll every 2 seconds for updates
+            intervalId = setInterval(fetchSession, 2000);
         });
+
+        // Cleanup interval on unmount
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
     }, [params]);
 
     if (!session || !sessionId) {
