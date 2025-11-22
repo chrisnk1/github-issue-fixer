@@ -49,6 +49,9 @@ The web UI provides a Swiss-Japanese minimalist interface for:
 - Real-time progress tracking
 - Viewing generated fix plans with AI suggestions
 - Accessing recommended resources and documentation
+
+![Home Page](packages/frontend/public/image-1.png)
+![Session Page](packages/frontend/public/image-2.png)
 ```
 
 ## Requirements
