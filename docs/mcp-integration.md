@@ -63,7 +63,7 @@ import { AIClient, getMCPCredentials } from '@fix-together/core';
 const aiClient = new AIClient({
     provider: 'groq',
     apiKey: process.env.GROQ_API_KEY!,
-    model: 'llama-3.3-70b-versatile',
+    model: 'moonshotai/kimi-k2-instruct-0905',
 });
 
 // Get MCP credentials from sandbox

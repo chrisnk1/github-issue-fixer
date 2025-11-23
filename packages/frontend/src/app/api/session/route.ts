@@ -39,10 +39,10 @@ export async function POST(request: NextRequest) {
         console.log(`✅ Parsed: ${owner}/${repo}#${issueNumber}`);
 
         // Check for required environment variables
-        if (!process.env.E2B_API_KEY || !process.env.GOOGLE_AI_API_KEY) {
+        if (!process.env.E2B_API_KEY || !process.env.GROQ_API_KEY) {
             console.error('❌ Missing required environment variables');
             return NextResponse.json(
-                { error: 'Server configuration error: Missing E2B_API_KEY or GOOGLE_AI_API_KEY' },
+                { error: 'Server configuration error: Missing E2B_API_KEY or GROQ_API_KEY' },
                 { status: 500 }
             );
         }
@@ -130,12 +130,12 @@ async function runWorkflow(
         session.progress = 0.25;
 
         // 3. Initialize AI Client
-        console.log(`[${sessionId}] 🤖 Initializing AI client (Gemini)...`);
+        console.log(`[${sessionId}] 🤖 Initializing AI client (Groq)...`);
         session.currentStep = 'Initializing AI client...';
         const ai = new AIClient({
-            provider: 'google',
-            apiKey: process.env.GOOGLE_AI_API_KEY!,
-            model: 'gemini-2.0-flash-exp',
+            provider: 'groq',
+            apiKey: process.env.GROQ_API_KEY!,
+            model: 'moonshotai/kimi-k2-instruct-0905',
         });
         console.log(`[${sessionId}] ✅ AI client initialized`);
         session.progress = 0.3;

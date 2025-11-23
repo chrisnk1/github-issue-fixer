@@ -36,7 +36,7 @@ async function researchWithMCP() {
     const ai = new AIClient({
         provider: 'groq',
         apiKey: process.env.GROQ_API_KEY!,
-        model: 'llama-3.3-70b-versatile',
+        model: 'moonshotai/kimi-k2-instruct-0905',
     });
 
     console.log('Starting AI research with MCP tools...');

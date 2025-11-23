@@ -32,9 +32,9 @@ async function runWorkflow() {
         // 3. Initialize AI Client
         console.log('🤖 Initializing AI Client...');
         const ai = new AIClient({
-            provider: 'google',
-            apiKey: process.env.GOOGLE_AI_API_KEY!,
-            model: 'gemini-2.0-flash-exp', // Using a capable Google model
+            provider: 'groq',
+            apiKey: process.env.GROQ_API_KEY!,
+            model: 'moonshotai/kimi-k2-instruct-0905',
         });
 
         // 4. Initialize Fix Planner

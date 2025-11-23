@@ -11,8 +11,8 @@ import 'dotenv/config';
 async function runRealIssueWorkflow() {
     console.log('🚀 Starting Real Issue Workflow with Fix Suggestions\n');
 
-    if (!process.env.E2B_API_KEY || !process.env.GOOGLE_AI_API_KEY || !process.env.EXA_API_KEY) {
-        console.error('❌ Missing required environment variables: E2B_API_KEY, GOOGLE_AI_API_KEY, or EXA_API_KEY');
+    if (!process.env.E2B_API_KEY || !process.env.GROQ_API_KEY || !process.env.EXA_API_KEY) {
+        console.error('❌ Missing required environment variables: E2B_API_KEY, GROQ_API_KEY, or EXA_API_KEY');
         console.log('   Please ensure .env file contains these keys.');
         process.exit(1);
     }
@@ -38,9 +38,9 @@ async function runRealIssueWorkflow() {
         // 3. Initialize AI Client
         console.log('🤖 Initializing AI Client...');
         const ai = new AIClient({
-            provider: 'google',
-            apiKey: process.env.GOOGLE_AI_API_KEY!,
-            model: 'gemini-2.0-flash-exp',
+            provider: 'groq',
+            apiKey: process.env.GROQ_API_KEY!,
+            model: 'moonshotai/kimi-k2-instruct-0905',
         });
 
         // 4. Initialize Fix Planner

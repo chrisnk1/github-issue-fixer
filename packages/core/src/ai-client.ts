@@ -47,7 +47,7 @@ export class AIClient {
     /**
      * Generates a completion from the AI model
      */
-    async generate(messages: AIMessage[], options?: { temperature?: number }): Promise<AIResponse> {
+    async generate(messages: AIMessage[], options?: { temperature?: number; maxTokens?: number }): Promise<AIResponse> {
         if (this.config.provider === 'google') {
             return this.generateGoogle(messages, options);
         } else {
@@ -57,7 +57,7 @@ export class AIClient {
 
     private async generateGoogle(
         messages: AIMessage[],
-        options?: { temperature?: number }
+        options?: { temperature?: number; maxTokens?: number }
     ): Promise<AIResponse> {
         if (!this.googleClient) {
             throw new Error('Google AI client not initialized');
@@ -80,6 +80,7 @@ export class AIClient {
             contents: parts,
             generationConfig: {
                 temperature: options?.temperature ?? 0.7,
+                maxOutputTokens: options?.maxTokens,
             },
             systemInstruction: systemMessage?.content,
         } as any);
@@ -99,7 +100,7 @@ export class AIClient {
 
     private async generateGroq(
         messages: AIMessage[],
-        options?: { temperature?: number }
+        options?: { temperature?: number; maxTokens?: number }
     ): Promise<AIResponse> {
         if (!this.groqClient) {
             throw new Error('Groq client not initialized');
@@ -112,6 +113,7 @@ export class AIClient {
                 content: m.content,
             })),
             temperature: options?.temperature ?? 0.7,
+            max_tokens: options?.maxTokens,
         });
 
         const choice = completion.choices[0];
@@ -135,7 +137,7 @@ export class AIClient {
     async generateJSON<T>(
         messages: AIMessage[],
         schema: string,
-        options?: { temperature?: number }
+        options?: { temperature?: number; maxTokens?: number }
     ): Promise<T> {
         const enhancedMessages: AIMessage[] = [
             ...messages,
@@ -169,7 +171,7 @@ export class AIClient {
     async generateWithMCP(
         messages: AIMessage[],
         mcpConfig: MCPConfig,
-        options?: { temperature?: number }
+        options?: { temperature?: number; maxTokens?: number }
     ): Promise<AIResponse> {
         if (this.config.provider === 'groq') {
             return this.generateGroqWithMCP(messages, mcpConfig, options);
@@ -183,7 +185,7 @@ export class AIClient {
     private async generateGroqWithMCP(
         messages: AIMessage[],
         mcpConfig: MCPConfig,
-        options?: { temperature?: number }
+        options?: { temperature?: number; maxTokens?: number }
     ): Promise<AIResponse> {
         if (!this.groqClient) {
             throw new Error('Groq client not initialized');
@@ -210,6 +212,7 @@ export class AIClient {
                 }
             ],
             temperature: options?.temperature ?? 0.7,
+            max_tokens: options?.maxTokens,
         });
 
         return {
