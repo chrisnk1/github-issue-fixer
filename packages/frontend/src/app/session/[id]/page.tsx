@@ -248,7 +248,14 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
                                     >
                                         {resource.title}
                                     </a>
-                                    <span className="resource-url">{resource.url}</span>
+                                    <a
+                                        href={resource.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="resource-url"
+                                    >
+                                        {resource.url}
+                                    </a>
                                     {resource.snippet && (
                                         <p className="resource-snippet">{resource.snippet}</p>
                                     )}

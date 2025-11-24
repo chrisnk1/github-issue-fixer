@@ -43,7 +43,7 @@ export default function Home() {
 
           {/* Tagline */}
           <p className="tagline">
-            Collaborative AI-powered issue resolution. Analyze, plan, execute, and ship fixes with E2B Sandboxes and Google AI.
+            Collaborative AI-powered issue resolution. Analyze, plan, execute, and ship fixes with E2B Sandboxes and Groq AI.
           </p>
 
           {/* Input Form */}
@@ -121,7 +121,7 @@ export default function Home() {
           <div className="features-grid">
             {[
               { icon: '◻', title: 'Isolated Sandboxes', description: 'Safe execution' },
-              { icon: '◉', title: 'AI-Powered', description: 'Gemini intelligence' },
+              { icon: '◉', title: 'AI-Powered', description: 'Groq intelligence' },
               { icon: '◈', title: 'Real-time', description: 'Live progress' },
               { icon: '◇', title: 'Open Source', description: 'MIT License' }
             ].map((feature, index) => (
@@ -137,7 +137,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>E2B Sandboxes × Google AI × MCP Servers</p>
+        <p>E2B Sandboxes × Groq AI × MCP Servers</p>
         <p className="footer-secondary">Open Source</p>
       </footer>
     </div>
