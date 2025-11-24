@@ -22,7 +22,6 @@ cp .env.example .env
 # Run the real issue fixer (recommended)
 npx tsx run-real-issue.ts
 
-# Or run CLI
 ```
 
 ### Web UI
@@ -34,8 +33,11 @@ cd packages/frontend
 # Create .env.local with your API keys
 cat > .env.local << EOF
 E2B_API_KEY=your_e2b_api_key_here
-GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 EXA_API_KEY=your_exa_api_key_here
+
+PORT=3000
+NODE_ENV=development
 EOF
 
 # Run development server
