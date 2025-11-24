@@ -212,6 +212,52 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
                     </section>
                 )}
 
+                {/* Clarifying Questions */}
+                {session.plan && session.plan.questions && session.plan.questions.length > 0 && (
+                    <section className="session-section">
+                        <div className="section-header">
+                            <div className="section-icon">?</div>
+                            <h2 className="section-title">Clarifying Questions</h2>
+                        </div>
+                        <div className="question-list">
+                            {session.plan.questions.map((q, i) => (
+                                <div key={i} className="question-item">
+                                    <div className="question-number">{String(i + 1).padStart(2, '0')}</div>
+                                    <p className="question-text">{q.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Recommended Resources */}
+                {session.plan && session.plan.resources && session.plan.resources.length > 0 && (
+                    <section className="session-section">
+                        <div className="section-header">
+                            <div className="section-icon">📚</div>
+                            <h2 className="section-title">Recommended Resources</h2>
+                        </div>
+                        <div className="resource-list">
+                            {session.plan.resources.map((resource, i) => (
+                                <div key={i} className="resource-item">
+                                    <a
+                                        href={resource.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="resource-title"
+                                    >
+                                        {resource.title}
+                                    </a>
+                                    <span className="resource-url">{resource.url}</span>
+                                    {resource.snippet && (
+                                        <p className="resource-snippet">{resource.snippet}</p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* Complete State */}
                 {session.status === 'complete' && (
                     <section className="session-section complete">
