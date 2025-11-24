@@ -124,18 +124,27 @@ async function runRealIssueWorkflow() {
             console.log('   No specific resources found');
         }
 
-        console.log('🔹 Implementation Suggestions:');
-        if (plan.suggestions.length > 0) {
-            plan.suggestions.forEach((s, i) => {
-                console.log(`${i + 1}. ${s.text || (s as any).description || JSON.stringify(s)}`);
-            });
-        } else {
-            console.log('   See steps above for implementation details');
-        }
+        // 9. Save Plan for Execution
+        console.log('\n� Saving Fix Plan for potential fix...');
+        const fs = await import('fs/promises');
+        const planData = {
+            issue: {
+                repo,
+                content: issueResponse.content
+            },
+            plan,
+            timestamp: new Date().toISOString()
+        };
 
+        await fs.writeFile('fix-plan.json', JSON.stringify(planData, null, 2));
+        console.log('✅ Plan saved to fix-plan.json');
+
+        console.log('\n🚀 To execute this plan and open a PR, run:');
+        console.log('   npx tsx run-fix.ts');
+        console.log('');
         // Cleanup
         await sandbox.cleanup();
-        console.log('\n✅ Workflow completed successfully');
+        console.log('\n✅ Planning completed successfully');
 
     } catch (error) {
         console.error('❌ Workflow failed:', error);

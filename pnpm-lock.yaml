@@ -73,6 +73,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@e2b/code-interpreter':
+        specifier: ^2.2.0
+        version: 2.2.0
       '@google/generative-ai':
         specifier: ^0.24.1
         version: 0.24.1
@@ -312,6 +315,13 @@ packages:
       '@bufbuild/protobuf': ^2.2.0
     dependencies:
       '@bufbuild/protobuf': 2.10.1
+    dev: false
+
+  /@e2b/code-interpreter@2.2.0:
+    resolution: {integrity: sha512-j2XIhuuV+MvjCMJbwRCL3hZjkOTv4Jk1FygI4dCwaU9PggtAW+TXhyaVzzVPZroE9fqxLfrXGqY08P06Ei7MQA==}
+    engines: {node: '>=20'}
+    dependencies:
+      e2b: 2.7.0
     dev: false
 
   /@emnapi/core@1.7.1:

@@ -1,0 +1,105 @@
+.pr-draft-panel {
+    margin-top: var(--spacing-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: var(--spacing-lg);
+}
+
+.pr-content {
+    margin-top: var(--spacing-md);
+}
+
+.pr-title-section,
+.pr-body-section {
+    margin-bottom: var(--spacing-md);
+}
+
+.pr-title-section label,
+.pr-body-section label {
+    display: block;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pr-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.pr-title span {
+    flex: 1;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.pr-body {
+    position: relative;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: var(--spacing-md);
+}
+
+.pr-body pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    line-height: 1.6;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.pr-body .copy-icon-button {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+}
+
+.copy-icon-button {
+    padding: 4px 8px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+
+.copy-icon-button:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-color);
+}
+
+.pr-actions {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.create-pr-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.create-pr-button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

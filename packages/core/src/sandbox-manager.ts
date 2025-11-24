@@ -1,4 +1,5 @@
 import { Sandbox } from 'e2b';
+import { Sandbox as CodeInterpreterSandbox } from '@e2b/code-interpreter';
 import type {
     SandboxConfig,
     RepositoryInfo,
@@ -7,7 +8,7 @@ import type {
 } from './types.js';
 
 export class SandboxManager {
-    private sandbox: Sandbox | null = null;
+    private sandbox: Sandbox | CodeInterpreterSandbox | null = null;
     private config: SandboxConfig;
 
     constructor(config: SandboxConfig) {
@@ -32,12 +33,23 @@ export class SandboxManager {
             mcpConfig.filesystem = {};
         }
 
-        // Use betaCreate for MCP support
-        this.sandbox = await Sandbox.betaCreate({
-            apiKey: this.config.apiKey,
-            timeoutMs: this.config.timeout || 300000, // 5 minutes default
-            mcp: Object.keys(mcpConfig).length > 0 ? mcpConfig : undefined,
-        });
+        // Use CodeInterpreter if possible, otherwise fallback to Sandbox
+        try {
+            // @ts-ignore - Check if CodeInterpreter supports MCP via create
+            this.sandbox = await CodeInterpreterSandbox.create({
+                apiKey: this.config.apiKey,
+                timeoutMs: this.config.timeout || 300000,
+                // @ts-ignore - MCP support might be in beta or different signature
+                mcp: Object.keys(mcpConfig).length > 0 ? mcpConfig : undefined,
+            });
+        } catch (error) {
+            console.warn('Failed to create CodeInterpreter, falling back to Sandbox:', error);
+            this.sandbox = await Sandbox.betaCreate({
+                apiKey: this.config.apiKey,
+                timeoutMs: this.config.timeout || 300000,
+                mcp: Object.keys(mcpConfig).length > 0 ? mcpConfig : undefined,
+            });
+        }
     }
 
     /**
@@ -73,13 +85,13 @@ export class SandboxManager {
 
         // Detect package manager
         const detectCmd = `
-      cd /home/user/repo && \
-      if [ -f "pnpm-lock.yaml" ]; then echo "pnpm"; \
-      elif [ -f "yarn.lock" ]; then echo "yarn"; \
-      elif [ -f "package-lock.json" ]; then echo "npm"; \
-      elif [ -f "Cargo.toml" ]; then echo "cargo"; \
-      elif [ -f "go.mod" ]; then echo "go"; \
-      elif [ -f "requirements.txt" ]; then echo "pip"; \
+      cd /home/user/repo && \\
+      if [ -f "pnpm-lock.yaml" ]; then echo "pnpm"; \\
+      elif [ -f "yarn.lock" ]; then echo "yarn"; \\
+      elif [ -f "package-lock.json" ]; then echo "npm"; \\
+      elif [ -f "Cargo.toml" ]; then echo "cargo"; \\
+      elif [ -f "go.mod" ]; then echo "go"; \\
+      elif [ -f "requirements.txt" ]; then echo "pip"; \\
       else echo "unknown"; fi
     `;
 
@@ -128,13 +140,13 @@ export class SandboxManager {
 
         // Detect test command
         const detectCmd = `
-      cd /home/user/repo && \
-      if [ -f "package.json" ]; then \
-        if grep -q '"test":' package.json; then echo "npm test"; \
-        else echo "none"; fi; \
-      elif [ -f "Cargo.toml" ]; then echo "cargo test"; \
-      elif [ -f "go.mod" ]; then echo "go test ./..."; \
-      elif [ -f "pytest.ini" ] || [ -f "setup.py" ]; then echo "pytest"; \
+      cd /home/user/repo && \\
+      if [ -f "package.json" ]; then \\
+        if grep -q '"test":' package.json; then echo "npm test"; \\
+        else echo "none"; fi; \\
+      elif [ -f "Cargo.toml" ]; then echo "cargo test"; \\
+      elif [ -f "go.mod" ]; then echo "go test ./..."; \\
+      elif [ -f "pytest.ini" ] || [ -f "setup.py" ]; then echo "pytest"; \\
       else echo "none"; fi
     `;
 
@@ -250,6 +262,64 @@ export class SandboxManager {
     }
 
     /**
+     * Runs code using the Code Interpreter if available
+     */
+    async runCode(code: string, language: 'python' | 'javascript' = 'python'): Promise<any> {
+        if (!this.sandbox) {
+            throw new Error('Sandbox not initialized');
+        }
+
+        if (this.sandbox instanceof CodeInterpreterSandbox) {
+            try {
+                // Use CodeInterpreter's runCode
+                if (language === 'python') {
+                    const exec = await this.sandbox.runCode(code);
+                    return {
+                        text: exec.text,
+                        results: exec.results,
+                        logs: exec.logs,
+                        error: exec.error
+                    };
+                } else {
+                    // Try running JS via runCode if supported
+                    const exec = await this.sandbox.runCode(code, { language: 'javascript' });
+                    return {
+                        text: exec.text,
+                        results: exec.results,
+                        logs: exec.logs,
+                        error: exec.error
+                    };
+                }
+            } catch (e: any) {
+                console.error('CodeInterpreter runCode failed:', e);
+                console.error('Error details:', e.message, e.stack);
+                // Fallback to node command if javascript kernel not available or other error
+                if (language === 'javascript') {
+                    const result = await this.sandbox.commands.run(`node -e "${code.replace(/"/g, '\\"')}"`);
+                    return {
+                        text: result.stdout,
+                        logs: { stdout: [result.stdout], stderr: [result.stderr] },
+                        error: result.exitCode !== 0 ? result.stderr : undefined
+                    };
+                }
+                throw e;
+            }
+        } else {
+            // Fallback for standard Sandbox
+            const cmd = language === 'python'
+                ? `python3 -c "${code.replace(/"/g, '\\"')}"`
+                : `node -e "${code.replace(/"/g, '\\"')}"`;
+
+            const result = await this.sandbox.commands.run(cmd);
+            return {
+                text: result.stdout,
+                logs: { stdout: [result.stdout], stderr: [result.stderr] },
+                error: result.exitCode !== 0 ? result.stderr : undefined
+            };
+        }
+    }
+
+    /**
      * Cleans up and closes the sandbox
      */
     async cleanup(): Promise<void> {
@@ -262,7 +332,7 @@ export class SandboxManager {
     /**
      * Gets the sandbox instance (for advanced usage)
      */
-    getSandbox(): Sandbox | null {
+    getSandbox(): Sandbox | CodeInterpreterSandbox | null {
         return this.sandbox;
     }
 
@@ -273,6 +343,7 @@ export class SandboxManager {
         if (!this.sandbox) {
             throw new Error('Sandbox not initialized');
         }
+        // @ts-ignore - getMcpUrl exists on Sandbox but might be missing in CodeInterpreter types if not updated
         return this.sandbox.getMcpUrl();
     }
 
@@ -283,6 +354,7 @@ export class SandboxManager {
         if (!this.sandbox) {
             throw new Error('Sandbox not initialized');
         }
+        // @ts-ignore
         const token = await this.sandbox.getMcpToken();
         if (!token) {
             throw new Error('MCP not enabled for this sandbox');

@@ -1,0 +1,121 @@
+openapi: 3.0.0
+info:
+  title: E2B Sandbox API
+  version: 1.0.0
+  description: API for managing E2B sandboxes
+
+paths:
+  /sandboxes:
+    post:
+      summary: Create a new sandbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSandboxRequest'
+      responses:
+        '201':
+          description: Sandbox created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sandbox'
+
+components:
+  schemas:
+    AutoPauseConfig:
+      type: object
+      description: Configuration for auto-pause behavior
+      properties:
+        killOnPause:
+          type: boolean
+          default: true
+          description: Kill all processes when auto-pausing
+        gracefulTimeoutSecs:
+          type: integer
+          default: 30
+          description: Timeout for graceful shutdown in seconds
+          minimum: 1
+          maximum: 300
+
+    CreateSandboxRequest:
+      type: object
+      properties:
+        autoPause:
+          type: boolean
+          default: false
+          description: Enable auto-pause functionality
+        autoPauseConfig:
+          $ref: '#/components/schemas/AutoPauseConfig'
+        timeout:
+          type: integer
+          description: Sandbox timeout in seconds
+          minimum: 60
+          maximum: 86400
+
+    Sandbox:
+      type: object
+      properties:
+        sandboxId:
+          type: string
+          description: Unique sandbox identifier
+        autoPause:
+          type: boolean
+          description: Whether auto-pause is enabled
+        autoPauseConfig:
+          $ref: '#/components/schemas/AutoPauseConfig'
+        timeout:
+          type: integer
+          description: Sandbox timeout in seconds
+        state:
+          type: string
+          enum: [running, paused, stopped]
+          description: Current sandbox state
+
+    ProcessInfo:
+      type: object
+      properties:
+        pid:
+          type: integer
+          description: Process ID
+        name:
+          type: string
+          description: Process name
+        cmd:
+          type: string
+          description: Command that started the process
+        startTime:
+          type: string
+          format: date-time
+          description: When the process was started
+        state:
+          type: string
+          enum: [running, suspended, terminated]
+          description: Current process state
+
+    ListProcessesResponse:
+      type: object
+      properties:
+        processes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessInfo'
+          description: List of running processes
+
+  /sandboxes/{sandboxId}/commands:
+    get:
+      summary: List all commands in a sandbox
+      parameters:
+        - name: sandboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of processes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListProcessesResponse'

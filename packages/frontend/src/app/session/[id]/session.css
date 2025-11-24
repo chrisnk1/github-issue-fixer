@@ -359,6 +359,54 @@
     flex-wrap: wrap;
 }
 
+.btn-accent {
+    padding: var(--space-3) var(--space-6);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-accent:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-accent:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Floating View Fixes Button */
+.floating-view-fixes-btn {
+    position: fixed;
+    bottom: var(--space-8);
+    right: var(--space-8);
+    padding: var(--space-4) var(--space-6);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 998;
+    font-size: 0.9rem;
+}
+
+.floating-view-fixes-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.floating-view-fixes-btn:active {
+    transform: translateY(0);
+}
+
 /* Questions */
 .question-list {
     display: flex;

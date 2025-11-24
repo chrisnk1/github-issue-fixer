@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import './session.css';
+import { FixPanelSlide } from './components/FixPanelSlide';
+import { PRDraftPanel } from './components/PRDraftPanel';
 
 interface SessionData {
     id: string;
@@ -24,6 +26,15 @@ interface SessionData {
         questions: Array<{ text: string }>;
         resources?: Array<{ title: string; url: string; snippet?: string }>;
     };
+    fixes?: Array<{
+        file: string;
+        language: string;
+        code: string;
+    }>;
+    prDraft?: {
+        title: string;
+        body: string;
+    };
     changes?: Array<{
         file: string;
         diff: string;
@@ -34,6 +45,45 @@ interface SessionData {
 export default function SessionPage({ params }: { params: Promise<{ id: string }> }) {
     const [sessionId, setSessionId] = useState<string>('');
     const [session, setSession] = useState<SessionData | null>(null);
+    const [isGeneratingFixes, setIsGeneratingFixes] = useState(false);
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [userClosedPanel, setUserClosedPanel] = useState(false);
+    const [hasAutoOpened, setHasAutoOpened] = useState(false);
+
+    // Open panel when fixes are available (only once, and only if user hasn't closed it)
+    useEffect(() => {
+        if (session?.fixes && session.fixes.length > 0 && !hasAutoOpened && !userClosedPanel) {
+            setIsPanelOpen(true);
+            setHasAutoOpened(true);
+        }
+    }, [session?.fixes, hasAutoOpened, userClosedPanel]);
+
+    const handleGenerateFixes = async () => {
+        if (!sessionId || isGeneratingFixes) return;
+
+        setIsGeneratingFixes(true);
+        try {
+            const response = await fetch(`/api/session/${sessionId}/generate-fixes`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to start fix generation');
+            }
+
+            // Force a fetch to update UI immediately
+            fetch(`/api/session/${sessionId}`)
+                .then(res => res.json())
+                .then(data => setSession(data))
+                .catch(console.error);
+
+        } catch (error) {
+            console.error('Error generating fixes:', error);
+            alert('Failed to generate fixes. Please try again.');
+        } finally {
+            setIsGeneratingFixes(false);
+        }
+    };
 
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
@@ -48,8 +98,9 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
                     .then(data => {
                         setSession(data);
 
-                        // Stop polling if session is complete or errored
-                        if (data.status === 'complete' || data.status === 'error') {
+                        // Only stop polling if there's an error
+                        // Keep polling to catch fix generation updates
+                        if (data.status === 'error') {
                             if (intervalId) {
                                 clearInterval(intervalId);
                             }
@@ -298,8 +349,50 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
                             >
                                 Export JSON
                             </button>
+                            {!session.fixes && (
+                                <button
+                                    className="btn btn-accent"
+                                    onClick={handleGenerateFixes}
+                                    disabled={isGeneratingFixes}
+                                >
+                                    {isGeneratingFixes ? '⏳ Generating Potential Fixes...' : '🔧 Generate Potential Fixes'}
+                                </button>
+                            )}
                         </div>
                     </section>
+                )}
+
+                {/* Sliding Fix Panel */}
+                {session.fixes && session.fixes.length > 0 && (
+                    <>
+                        <FixPanelSlide
+                            fixes={session.fixes}
+                            isOpen={isPanelOpen}
+                            onClose={() => {
+                                console.log('Panel onClose called, setting isPanelOpen to false');
+                                setIsPanelOpen(false);
+                                setUserClosedPanel(true);
+                            }}
+                        />
+                        {!isPanelOpen && (
+                            <button
+                                className="floating-view-fixes-btn"
+                                onClick={() => {
+                                    console.log('Opening panel, setting isPanelOpen to true');
+                                    setIsPanelOpen(true);
+                                    setUserClosedPanel(false);
+                                }}
+                                title="View potential fixes"
+                            >
+                                💡 View Fixes ({session.fixes.length})
+                            </button>
+                        )}
+                    </>
+                )}
+
+                {/* PR Draft */}
+                {session.prDraft && (
+                    <PRDraftPanel prDraft={session.prDraft} issueUrl={session.issueUrl} />
                 )}
 
                 {/* Error State */}

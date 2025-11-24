@@ -12,6 +12,15 @@ export interface SessionData {
     sandbox?: SandboxManager;
     overview?: any;
     plan?: any;
+    fixes?: Array<{
+        file: string;
+        language: string;
+        code: string;
+    }>;
+    prDraft?: {
+        title: string;
+        body: string;
+    };
     error?: string;
 }
 

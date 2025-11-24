@@ -1,0 +1,161 @@
+.code-fix-card {
+    background: var(--color-surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.code-fix-card:hover {
+    border-color: var(--color-text-secondary);
+}
+
+.code-fix-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg);
+    border-bottom: var(--border-width) solid var(--color-border);
+    gap: var(--space-3);
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    min-width: 0;
+}
+
+.file-icon {
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.file-name {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-path {
+    font-family: var(--font-mono);
+    font-size: 0.75em;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.language-badge {
+    padding: 3px 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.copy-button {
+    padding: 6px 14px;
+    background: transparent;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.copy-button:hover {
+    background: var(--color-surface);
+    border-color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+}
+
+.copy-button.copied {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.code-wrapper {
+    position: relative;
+    max-height: 500px;
+    overflow: auto;
+    background: var(--color-bg);
+    border-radius: 4px;
+}
+
+.code-content {
+    margin: 0;
+    padding: var(--space-4);
+    background: var(--color-bg);
+    overflow-x: auto;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.8em;
+    line-height: 1.7;
+    tab-size: 4;
+}
+
+.code-content code {
+    color: var(--color-text-primary);
+    display: block;
+    white-space: pre;
+}
+
+/* Syntax highlighting with design system colors */
+.code-content .keyword {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.code-content .string {
+    color: #10b981;
+}
+
+.code-content .comment {
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+.code-content .function {
+    color: #764ba2;
+}
+
+/* Scrollbar styling */
+.code-wrapper::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.code-wrapper::-webkit-scrollbar-track {
+    background: var(--color-surface);
+}
+
+.code-wrapper::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+}
+
+.code-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+}

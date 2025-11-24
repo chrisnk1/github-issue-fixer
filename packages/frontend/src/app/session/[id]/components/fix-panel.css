@@ -1,0 +1,32 @@
+.fix-panel {
+    margin-top: var(--spacing-lg);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.section-header h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.fix-count {
+    padding: 4px 12px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.fixes-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}

@@ -1,0 +1,170 @@
+{
+  "issue": {
+    "repo": "e2b-dev/E2B",
+    "content": "#1006 – \"template alias is already taken\"\n\n**Description**  \nJust created a private template with the same config using a new API Key of a new project and got the error `Alias is already taken`.\n\n**To Reproduce**  \nJust build a noop template with the same alias using different API keys from different projects.\n\n**Expected behavior**  \nThe template should be built successfully.\n\n**Terminal commands & output**  \n```\n0.0s | 18:02:12 INFO Requesting build for template: claude-code-serve-test\nResponse 400.4s\nTraceback (most recent call last):\n  File \"/Users/mars/Projects/marswong/x/backend/app/e2b/build_template.py\", line 16, in \n    Template.build(template,\n  File \"/Users/mars/Projects/marswong/x/backend/.venv/lib/python3.10/site-packages/e2b/template_sync/main.py\", line 101, in build\n    response = request_build(\n  File \"/Users/mars/Projects/marswong/x/backend/.venv/lib/python3.10/site-packages/e2b/template_sync/build_api.py\", line 45, in request_build\n    raise handle_api_exception(res, BuildException)\ne2b.exceptions.BuildException: 400: Alias `claude-code-serve-test` is already taken\n```"
+  },
+  "plan": {
+    "id": "plan-1763987263852-349v5ayfr",
+    "steps": [
+      {
+        "id": "enforce-project-scoped-alias-uniqueness",
+        "description": "Change the backend uniqueness constraint on template aliases from global to per-project so the same alias can exist under different API keys/projects.",
+        "reasoning": "The error occurs because the database enforces a global unique index on the alias column. Making the constraint composite (project_id, alias) allows each project to reuse aliases without collision.",
+        "files": [
+          "backend/database/migrations/xxxx_project_alias_unique.sql",
+          "backend/models/template.py"
+        ],
+        "estimatedImpact": "high"
+      },
+      {
+        "id": "update-build-api-query",
+        "description": "Modify request_build to scope alias-existence checks to the authenticated project instead of checking across all templates.",
+        "reasoning": "The build endpoint currently queries for any template with the requested alias; it must filter by the project tied to the supplied API key so only that project’s templates are considered.",
+        "files": [
+          "backend/api/template_build.py"
+        ],
+        "estimatedImpact": "medium"
+      },
+      {
+        "id": "include-project-id-in-build-call",
+        "description": "Pass the resolved project identifier from the authenticated API key through to the build and validation logic.",
+        "reasoning": "The build flow needs the project context to enforce per-project uniqueness; the project_id should be extracted from the API key and threaded into queries and constraints.",
+        "files": [
+          "backend/api/template_build.py",
+          "backend/services/template_service.py"
+        ],
+        "estimatedImpact": "medium"
+      },
+      {
+        "id": "add-tests-for-alias-per-project",
+        "description": "Write unit and integration tests that create templates with identical aliases under different projects and assert success.",
+        "reasoning": "Automated tests prevent regression and verify the fix works across edge cases like deleted templates, case sensitivity, and concurrent builds.",
+        "files": [
+          "tests/test_template_build.py",
+          "tests/test_template_model.py"
+        ],
+        "estimatedImpact": "low"
+      }
+    ],
+    "questions": [
+      {
+        "id": "alias_scope",
+        "text": "Is the template alias required to be globally unique across all projects/API keys, or only within a single project?",
+        "type": "choice",
+        "options": [
+          "Globally unique",
+          "Unique per project",
+          "Unique per API key",
+          "Other"
+        ],
+        "context": "Determines whether the error is intentional or a bug"
+      },
+      {
+        "id": "expected_behaviour",
+        "text": "Should users in different projects be allowed to reuse the same alias, or is the current uniqueness rule desired?",
+        "type": "choice",
+        "options": [
+          "Allow reuse across projects",
+          "Keep global uniqueness",
+          "Allow reuse within org only",
+          "Other"
+        ],
+        "context": "Defines the intended behaviour for the fix"
+      },
+      {
+        "id": "old_template",
+        "text": "When a new build attempts to reuse an alias, should the system automatically delete/replace the previous template with that alias, or keep both?",
+        "type": "choice",
+        "options": [
+          "Replace old template",
+          "Keep both and return error",
+          "Version templates under same alias",
+          "Other"
+        ],
+        "context": "Impacts implementation approach"
+      },
+      {
+        "id": "migration_concern",
+        "text": "Do existing templates with duplicate aliases (created before this fix) need to be handled, or will the fix only apply to new builds?",
+        "type": "confirm",
+        "context": "Affects scope of data migration or backfill scripts"
+      }
+    ],
+    "resources": [
+      {
+        "title": "Similar issue: template alias is already taken",
+        "url": "https://github.com/search?q=template%20alias%20is%20already%20taken&type=issues",
+        "type": "issue",
+        "relevance": 0.8,
+        "snippet": "Search results for: template alias is already taken"
+      },
+      {
+        "title": "Similar issue: 400 Alias is already taken",
+        "url": "https://github.com/search?q=400%20Alias%20is%20already%20taken&type=issues",
+        "type": "issue",
+        "relevance": 0.7000000000000001,
+        "snippet": "Search results for: 400 Alias is already taken"
+      },
+      {
+        "title": "Stack Overflow: e2b \"template alias is already taken\" 400",
+        "url": "https://stackoverflow.com/search?q=e2b%20%22template%20alias%20is%20already%20taken%22%20400",
+        "type": "stackoverflow",
+        "relevance": 0.7
+      },
+      {
+        "title": "Similar issue: e2b template build alias exists",
+        "url": "https://github.com/search?q=e2b%20template%20build%20alias%20exists&type=issues",
+        "type": "issue",
+        "relevance": 0.6000000000000001,
+        "snippet": "Search results for: e2b template build alias exists"
+      },
+      {
+        "title": "Stack Overflow: e2b Template.build \"Alias is already taken\" different API key",
+        "url": "https://stackoverflow.com/search?q=e2b%20Template.build%20%22Alias%20is%20already%20taken%22%20different%20API%20key",
+        "type": "stackoverflow",
+        "relevance": 0.6
+      },
+      {
+        "title": "Blog: e2b template alias already taken 400 error",
+        "url": "https://www.google.com/search?q=e2b%20template%20alias%20already%20taken%20400%20error%20tutorial",
+        "type": "blog",
+        "relevance": 0.6
+      },
+      {
+        "title": "Blog: e2b build template duplicate alias different API key",
+        "url": "https://www.google.com/search?q=e2b%20build%20template%20duplicate%20alias%20different%20API%20key%20tutorial",
+        "type": "blog",
+        "relevance": 0.5
+      }
+    ],
+    "suggestions": [
+      {
+        "text": "Add a database migration that creates a unique composite index on (project_id, alias) and drops the old unique index on alias alone to enforce per-project uniqueness at the storage layer.",
+        "category": "best-practice",
+        "priority": "high"
+      },
+      {
+        "text": "Introduce a namespace prefix (e.g., project short-code) to aliases so global collision is impossible without changing the uniqueness constraint, keeping the code change minimal.",
+        "category": "alternative",
+        "priority": "medium"
+      },
+      {
+        "text": "Write parallel pytest cases that spin up two isolated test projects and concurrently create templates with the same alias, asserting both succeed and are queryable via their respective API keys.",
+        "category": "testing",
+        "priority": "high"
+      },
+      {
+        "text": "Cache alias→project lookups in Redis with a 5-minute TTL so repeated builds don’t hit the DB each time, invalidating the cache on template create/delete to keep checks fast.",
+        "category": "performance",
+        "priority": "medium"
+      },
+      {
+        "text": "Add a uniqueness check at the service layer that first queries by project_id to avoid table scans, and ensure the ORM query uses an index seek rather than a full collection scan.",
+        "category": "performance",
+        "priority": "high"
+      }
+    ],
+    "version": 1
+  },
+  "timestamp": "2025-11-24T12:27:43.855Z"
+}
